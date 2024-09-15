@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scrape and Process UI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <nav class="level">
+            <div class="level-left">
+                <a href="{{ url_for('config_page') }}" class="button is-link">Go to Config Page</a>
+                <button id="theme-toggle" class="button is-light">Toggle Dark Mode</button>
+            </div>
+        </nav>
+
+        <h1 class="title">Scrape and Process</h1>
+
+        <form id="process-form" action="{{ url_for('process') }}" method="POST" enctype="multipart/form-data">
+            <div class="field">
+                <label class="field-label">Process Type</label>
+                <div class="control">
+                    <label class="radio">
+                        <input type="radio" name="process_type" value="web" checked>
+                        Web Search
+                    </label>
+                    <label class="radio">
+                        <input type="radio" name="process_type" value="file">
+                        File Processing
+                    </label>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="field-label">Query</label>
+                <div class="control">
+                    <input class="input" type="text" name="query" placeholder="Enter your query" value="{{ request.form.get('query', '') }}" required>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="field-label">Languages</label>
+                <div class="control">
+                    <div class="select is-multiple">
+                        <select name="languages" multiple required>
+                            {% for lang in languages %}
+                                <option value="{{ lang }}" {% if lang in request.form.getlist('languages') %}selected{% endif %}>{{ lang }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="field-label">AI Model</label>
+                <div class="control">
+                    <div class="select">
+                        <select name="model" required>
+                            <option value="Ollama" {% if request.form.get('model') == 'Ollama' %}selected{% endif %}>Ollama</option>
+                            <option value="Cohere" {% if request.form.get('model') == 'Cohere' %}selected{% endif %}>Cohere</option>
+                            <option value="GPT" {% if request.form.get('model') == 'GPT' %}selected{% endif %}>GPT</option>
+                            <option value="Ollama and GPT" {% if request.form.get('model') == 'Ollama and GPT' %}selected{% endif %}>Ollama and GPT</option>
+                            <option value="Cohere and GPT" {% if request.form.get('model') == 'Cohere and GPT' %}selected{% endif %}>Cohere and GPT</option>
+                            <option value="Both" {% if request.form.get('model') == 'Both' %}selected{% endif %}>Both</option>
+                            <option value="All" {% if request.form.get('model') == 'All' %}selected{% endif %}>All</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div id="web-search-options">
+                <div class="field">
+                    <label class="field-label">Number of Pages</label>
+                    <div class="control">
+                        <input class="input" type="number" name="numero_pagine" value="{{ request.form.get('numero_pagine', 1) }}" min="1" required>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="field-label">Search Engines</label>
+                    <div class="control" id="search-engines">
+                        {% for name, url in search_engines.items() %}
+                            <label class="checkbox">
+                                <input type="checkbox" name="search_engines" value="{{ name }}" {% if name in request.form.getlist('search_engines') %}checked{% endif %}> {{ name }}
+                            </label><br>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div id="file-upload-option" style="display: none;">
+                <div class="field">
+                    <label class="field-label">Upload File</label>
+                    <div class="control">
+                        <input type="file" name="file" accept=".xlsx,.docx" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <button id="process-button" type="submit" class="button is-primary">Process</button>
+                </div>
+            </div>
+        </form>
+
+        <div id="result" class="notification is-info is-hidden">
+            <button class="delete"></button>
+            <p id="result-message"></p>
+            <pre id="result-output"></pre>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

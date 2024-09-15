@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <nav class="level">
+            <div class="level-left">
+                <a href="{{ url_for('index') }}" class="button is-link">Back to Home</a>
+                <button id="theme-toggle" class="button is-light">Toggle Dark Mode</button>
+            </div>
+        </nav>
+
+        <h1 class="title">Configuration</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="notification is-{{ category }}">
+                        <button class="delete"></button>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form id="config-form" action="{{ url_for('config_page') }}" method="POST">
+            <div class="field">
+                <label class="label">GPT API URL</label>
+                <div class="control">
+                    <input class="input" type="text" name="GPT_API_URL" value="{{ config.GPT_API_URL }}">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">GPT API Key</label>
+                <div class="control">
+                    <input class="input" type="password" name="GPT_API_KEY" value="{{ config.GPT_API_KEY }}">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Ollama API URL</label>
+                <div class="control">
+                    <input class="input" type="text" name="OLLAMA_API_URL" value="{{ config.OLLAMA_API_URL }}">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Cohere API URL</label>
+                <div class="control">
+                    <input class="input" type="text" name="COHERE_API_URL" value="{{ config.COHERE_API_URL }}">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Cohere API Key</label>
+                <div class="control">
+                    <input class="input" type="password" name="COHERE_API_KEY" value="{{ config.COHERE_API_KEY }}">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Cohere Model</label>
+                <div class="control">
+                    <input class="input" type="text" name="COHERE_MODEL" value="{{ config.COHERE_MODEL }}">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Chrome Driver Path</label>
+                <div class="control">
+                    <input class="input" type="text" name="CHROME_DRIVER_PATH" value="{{ config.CHROME_DRIVER_PATH }}">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Output File Path</label>
+                <div class="control">
+                    <input class="input" type="text" name="OUTPUT_FILE_PATH" value="{{ config.OUTPUT_FILE_PATH }}">
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="label">Search Engines</label>
+                <div class="control">
+                    <div id="search-engines">
+                        {% for name, url in config.SEARCH_ENGINES.items() %}
+                            <div class="field has-addons search-engine-entry">
+                                <div class="control">
+                                    <input class="input" type="text" name="search_engine_name[]" value="{{ name }}" placeholder="Name" required>
+                                </div>
+                                <div class="control">
+                                    <input class="input" type="text" name="search_engine_url[]" value="{{ url }}" placeholder="URL" required>
+                                </div>
+                                <div class="control">
+                                    <button type="button" class="button is-danger remove-search-engine">Remove</button>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <button type="button" id="add-search-engine" class="button is-info">Add Search Engine</button>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <button type="submit" class="button is-primary">Save Configuration</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

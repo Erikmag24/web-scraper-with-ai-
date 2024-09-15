@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Process Results</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <nav class="level">
+            <div class="level-left">
+                <a href="{{ url_for('index') }}" class="button is-link">Back to Home</a>
+            </div>
+        </nav>
+
+        <h1 class="title">Process Results</h1>
+
+        <div class="box">
+            <h2 class="subtitle">Query:</h2>
+            <p>{{ query }}</p>
+
+            <h2 class="subtitle">Translations:</h2>
+            <ul>
+                {% for lang, translation in translations.items() %}
+                    <li><strong>{{ lang }}:</strong> {{ translation }}</li>
+                {% endfor %}
+            </ul>
+
+            <h2 class="subtitle">Output:</h2>
+            <pre>{{ output }}</pre>
+        </div>
+    </div>
+</body>
+</html>
